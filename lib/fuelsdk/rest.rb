@@ -69,7 +69,6 @@ module FuelSDK
         puts "rest request: action: #{action.inspect}, url: #{url.inspect}, options: #{options.inspect}"
         begin
           (options['params'] ||= {}).merge! 'access_token' => auth_token
-          puts "rest client: #{rest_client.inspect}"
           rsp = rest_client.send(action, url, options)
           raise 'Unauthorized' if rsp.message == 'Unauthorized'
         rescue Exception => e

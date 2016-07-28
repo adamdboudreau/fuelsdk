@@ -110,6 +110,7 @@ module FuelSDK
     end
 
     def soap_client
+      puts 'setting up new soap client' if @soap_client.nil?
       ca_file = ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV] || OpenSSL::X509::DEFAULT_CERT_FILE
       ca_path = (ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV] || OpenSSL::X509::DEFAULT_CERT_DIR).chomp('/')
       puts "#{OpenSSL::X509::DEFAULT_CERT_FILE_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_FILE.inspect}"
@@ -126,7 +127,9 @@ module FuelSDK
         open_timeout:180,
         read_timeout: 180,
         ssl_ca_cert_file: ca_file,
-        ssl_verify_mode: :peer
+        ssl_verify_mode: :peer,
+        ssl_version: :TLSv1,
+        cert_type: :pem
       )
     end
 
@@ -404,7 +407,6 @@ module FuelSDK
         response = action.eql?(:describe) ? DescribeResponse : SoapResponse
         retried = false
         begin
-          puts "soap client: #{soap_client.inspect}"
           rsp = soap_client.call(action, :message => message)
         rescue Exception => e
           puts "soap client rescue exception: #{e.inspect}"
