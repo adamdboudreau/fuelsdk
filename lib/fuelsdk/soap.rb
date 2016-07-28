@@ -110,6 +110,11 @@ module FuelSDK
     end
 
     def soap_client
+      ca_file = ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV] || OpenSSL::X509::DEFAULT_CERT_FILE
+      ca_path = (ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV] || OpenSSL::X509::DEFAULT_CERT_DIR).chomp('/')
+      puts "#{OpenSSL::X509::DEFAULT_CERT_FILE_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_FILE.inspect}"
+      puts "#{OpenSSL::X509::DEFAULT_CERT_DIR_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_DIR.inspect}"
+
       self.refresh unless internal_token
       @soap_client ||= Savon.client(
         soap_header: header,
@@ -119,7 +124,9 @@ module FuelSDK
         raise_errors: false,
         log: debug,
         open_timeout:180,
-        read_timeout: 180
+        read_timeout: 180,
+        ssl_ca_cert_file: ca_file,
+        ssl_verify_mode: :peer
       )
     end
 
