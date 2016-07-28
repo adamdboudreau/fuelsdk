@@ -69,6 +69,7 @@ module FuelSDK
         puts "#{method.inspect}, #{url.inspect}, #{options.inspect}"
         uri = generate_uri url, options['params']
 
+        openssl_dir = OpenSSL::X509::DEFAULT_CERT_AREA
         mac_openssl = '/System/Library/OpenSSL' == openssl_dir
 
         puts "%s: %s" % [OpenSSL::OPENSSL_VERSION, openssl_dir]
