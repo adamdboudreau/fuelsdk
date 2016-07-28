@@ -90,6 +90,9 @@ module FuelSDK
 
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
+        http.ca_file = ca_file
+        http.ca_path = ca_path
+
         data = options['data']
         _request = method.new uri.request_uri
         _request.body = data.to_json if data
@@ -119,6 +122,30 @@ module FuelSDK
           puts "Error: connection refused"
           exit 1
         rescue OpenSSL::SSL::SSLError => e
+          puts "#{e.class}: #{e.message}"
+
+          if failed_cert
+            puts "\nThe server presented a certificate that could not be verified:"
+            puts "  subject: #{failed_cert.subject}"
+            puts "  issuer: #{failed_cert.issuer}"
+            puts "  error code %s" % failed_cert_reason
+          end
+
+          ca_file_missing = !File.exist?(ca_file) && !mac_openssl
+          ca_path_empty = Dir["#{ca_path}/*"].empty?
+
+          if ca_file_missing || ca_path_empty
+            puts "\nPossible causes:"
+            puts "  `%s' does not exist" % ca_file if ca_file_missing
+            puts "  `%s/' is empty" % ca_path if ca_path_empty
+          end
+
+          exit 1
+        rescue HTTPI::SSLError => e
+
+          #client.ssl_config.add_trust_ca("/etc/ssl/certs")
+
+          puts 'rescuing the httpi error!'
           puts "#{e.class}: #{e.message}"
 
           if failed_cert
