@@ -66,11 +66,14 @@ module FuelSDK
     private
       def rest_request action, url, options={}
         retried = false
+        puts "rest request: action: #{action.inspect}, url: #{url.inspect}, options: #{options.inspect}"
         begin
           (options['params'] ||= {}).merge! 'access_token' => auth_token
+          puts "rest client: #{rest_client.inspect}"
           rsp = rest_client.send(action, url, options)
           raise 'Unauthorized' if rsp.message == 'Unauthorized'
-        rescue
+        rescue Exception => e
+          puts "rescue rest client sent exception: #{e.inspect}"
           raise if retried
           self.refresh! # ask for forgiveness not, permission
           retried = true

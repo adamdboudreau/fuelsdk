@@ -393,11 +393,14 @@ module FuelSDK
       end
 
       def soap_request action, message
+        puts "soap request action #{action.inspect}, message: #{message.inspect}"
         response = action.eql?(:describe) ? DescribeResponse : SoapResponse
         retried = false
         begin
+          puts "soap client: #{soap_client.inspect}"
           rsp = soap_client.call(action, :message => message)
-        rescue
+        rescue Exception => e
+          puts "soap client rescue exception: #{e.inspect}"
           raise if retried
           retried = true
           retry
