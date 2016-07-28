@@ -128,8 +128,7 @@ module FuelSDK
         read_timeout: 180,
         ssl_ca_cert_file: ca_file,
         ssl_verify_mode: :peer,
-        ssl_version: :TLSv1,
-        cert_type: :pem
+        ssl_version: :TLSv1
       )
     end
 
