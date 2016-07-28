@@ -24,3 +24,5 @@ config.yaml
 /objsamples/config.yaml
 /objsamples/AllTest.bat
 .DS_STORE
+.idea
+vendor/

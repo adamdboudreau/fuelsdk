@@ -162,6 +162,7 @@ module FuelSDK
         'DataExtensionField'
       end
       def get
+        puts "data extension row get calling super!...#{self.inspect}"
         super
       end
     end
