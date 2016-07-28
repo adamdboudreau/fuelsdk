@@ -167,7 +167,38 @@ module FuelSDK
           exit 1
         end
 
-        HTTPResponse.new(response, self, :url => url, :options => options)
+        puts 'done sending request'
+        begin
+          puts 'setup response...'
+          puts "url: #{url.inspect}"
+          puts "options: #{options.inspect}"
+          puts "response: #{response.inspect}"
+          HTTPResponse.new(response, self, :url => url, :options => options)
+        rescue HTTPI::SSLError => e
+
+          #client.ssl_config.add_trust_ca("/etc/ssl/certs")
+
+          puts 'rescuing the httpi error!'
+          puts "#{e.class}: #{e.message}"
+
+          if failed_cert
+            puts "\nThe server presented a certificate that could not be verified:"
+            puts "  subject: #{failed_cert.subject}"
+            puts "  issuer: #{failed_cert.issuer}"
+            puts "  error code %s" % failed_cert_reason
+          end
+
+          ca_file_missing = !File.exist?(ca_file) && !mac_openssl
+          ca_path_empty = Dir["#{ca_path}/*"].empty?
+
+          if ca_file_missing || ca_path_empty
+            puts "\nPossible causes:"
+            puts "  `%s' does not exist" % ca_file if ca_file_missing
+            puts "  `%s/' is empty" % ca_path if ca_path_empty
+          end
+
+          exit 1
+        end
       end
   end
 end
