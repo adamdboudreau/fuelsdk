@@ -64,9 +64,7 @@ module FuelSDK
       end
 
       def request(method, url, options={})
-        puts "http request"
-        puts "method, url, options"
-        puts "#{method.inspect}, #{url.inspect}, #{options.inspect}"
+        puts "http_request; method: #{method.inspect}, url: #{url.inspect}, options: #{options.inspect}"
         uri = generate_uri url, options['params']
 
         openssl_dir = OpenSSL::X509::DEFAULT_CERT_AREA

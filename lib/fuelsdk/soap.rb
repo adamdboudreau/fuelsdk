@@ -111,27 +111,28 @@ module FuelSDK
 
     def soap_client
       puts 'setting up new soap client' if @soap_client.nil?
-      ca_file = ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV] || OpenSSL::X509::DEFAULT_CERT_FILE
-      ca_path = (ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV] || OpenSSL::X509::DEFAULT_CERT_DIR).chomp('/')
-      puts "#{OpenSSL::X509::DEFAULT_CERT_FILE_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_FILE.inspect}"
-      puts "#{OpenSSL::X509::DEFAULT_CERT_DIR_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_DIR.inspect}"
+      # ca_file = ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV] || OpenSSL::X509::DEFAULT_CERT_FILE
+      # ca_path = (ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV] || OpenSSL::X509::DEFAULT_CERT_DIR).chomp('/')
+      # puts "#{OpenSSL::X509::DEFAULT_CERT_FILE_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_FILE_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_FILE.inspect}"
+      # puts "#{OpenSSL::X509::DEFAULT_CERT_DIR_ENV.inspect}, #{ENV[OpenSSL::X509::DEFAULT_CERT_DIR_ENV].inspect}, #{OpenSSL::X509::DEFAULT_CERT_DIR.inspect}"
 
+      test_endpoint = "https://webservice-sha2.s6.exacttarget.com/Service.asmx"
+      self.refresh unless internal_token # refresh internal token before getting header for soap
       new_client_params = {
           soap_header: header,
           wsdl: wsdl,
-          endpoint: endpoint,
+          endpoint: test_endpoint,
           wsse_auth: ["*", "*"],
           raise_errors: false,
           log: debug,
           open_timeout:180,
           read_timeout: 180,
-          ssl_cert_file: ca_file,
-          ssl_ca_cert_file: ca_file,
+          # ssl_cert_file: ca_file,
+          # ssl_ca_cert_file: ca_file,
           ssl_verify_mode: :peer,
-          ssl_version: :SSLv3 # [:TLSv1, :SSLv2, :SSLv3]
+          ssl_version: :TLSv1 # [:TLSv1, :SSLv2, :SSLv3]
       }
       puts "new_client_params: #{new_client_params.inspect}"
-      self.refresh unless internal_token
       @soap_client ||= Savon.client(new_client_params)
     end
 
